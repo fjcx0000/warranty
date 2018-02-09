@@ -112,3 +112,25 @@ Route::group(['middleware' => ['auth']], function () {
     });
         Route::resource('invoices', 'InvoicesController');
 });
+/**
+ * Mobile
+ */
+Route::group(['prefix' => 'mobile'],function() {
+    Route::get('/','MobileController@index')->name('mobile.index');
+    Route::get('/agentlogin','MobileController@agentLogin')->name('mobile.agentlogin');
+    Route::post('/agentlogincheck','MobileController@agentLoginCheck')->name('mobile.agentlogincheck');
+    Route::get('/agentindex','MobileController@agentIndex')->name('mobile.agentindex');
+    Route::get('/agentlogout','MobileController@agentLogout')->name('mobile.agentlogout');
+    Route::post('/agentpwdchg','MobileController@agentChangePassword')->name('mobile.agentpwdchg');
+    Route::get('/getproducts','MobileController@getProducts')->name('mobile.getproducts');
+    Route::get('/getcolors','MobileController@getColors')->name('mobile.getcolors');
+    Route::get('/getsizes','MobileController@getSizes')->name('mobile.getsizes');
+    Route::post('/applyworksheet','MobileController@applyWorksheet')->name('mobile.applyworksheet');
+
+
+    Route::get('/clientconfirm','MobileController@worksheetClientConfirm')->name('mobile.clientconfirm');
+    Route::get('/worksheetuploadindex','MobileController@worksheetUploadIndex')->name('mobile.worksheetuploadindex');
+    Route::post('/worksheetupload','MobileController@worksheetUpload')->name('mobile.worksheetupload');
+    Route::post('/imageupload','MobileController@imageUpload')->name('mobile.imageupload');
+
+});

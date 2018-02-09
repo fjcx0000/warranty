@@ -55,5 +55,9 @@ class AccessServiceProvider extends ServiceProvider
             \App\Repositories\Invoice\InvoiceRepositoryContract::class,
             \App\Repositories\Invoice\InvoiceRepository::class
         );
+        $this->app->bind(
+            \App\Repositories\Mobile\MobileRepositoryContract::class,
+            \App\Repositories\Mobile\MobileRepository::class
+        );
     }
 }
