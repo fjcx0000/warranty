@@ -84,10 +84,16 @@ class MobileController extends Controller
     }
     public function getProducts(Request $request)
     {
-        if (empty($request->term))
-            return [];
+        if (empty($request->term) && empty($request->query))
+        {
+            return response()->json(['error' => 'Parameter term missing'], 404);
+        }
 
-        $qryStr = "%".$request->term."%";
+        if($request->has('term'))
+            $qryStr = "%".$request->term."%";
+        if($request->has('query'))
+            $qryStr = "%".$request->input('query')."%";
+
 
         $goods = DB::table('products')
             ->select('goodsno', 'goodsname')
@@ -157,7 +163,11 @@ class MobileController extends Controller
 
     public function worksheetClientConfirm(Request $request)
     {
-        return view('mobile.clientconfirm');
+        return view('mobile.clientconfirm')
+            ->with([
+                'clientMobile' => $request->clientMobile,
+                'sheetCode' => $request->sheetCode,
+            ]);
     }
     public function  worksheetUploadIndex(Request $request)
     {
@@ -195,7 +205,7 @@ class MobileController extends Controller
         if (preg_match('/^(data:\s*image\/(\w+);base64,)/', $base64_image_content, $result)) {
             $image_type = $result[2]; //data:image/jpeg;base64,
             $image_binary = base64_decode(str_replace($result[1], '', $base64_image_content));
-            $path = 'warranty/'.$request->sheetCode.'_'.$request->imagetype.'.'.$image_type;
+            $path = 'public/'.$request->sheetCode.'_'.$request->imagetype.'.'.$image_type;
             Storage::put($path, $image_binary);
             $worksheet = WorkSheet::where('sheetCode',$request->sheetCode)
                             ->get()->first();
@@ -218,9 +228,17 @@ class MobileController extends Controller
 
         ]);
 
-        $this->mobileRepo->uploadWorkSheet($request);
+        try {
+            $this->mobileRepo->uploadWorkSheet($request);
+            return "upload successfully";
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 404);
+        }
 
-        return "upload successfully";
+    }
+    public function worksheetEnqIndex(Request $requst)
+    {
+        return view('mobile.sheetenquiry');
     }
 
 }

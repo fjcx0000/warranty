@@ -59,5 +59,9 @@ class AccessServiceProvider extends ServiceProvider
             \App\Repositories\Mobile\MobileRepositoryContract::class,
             \App\Repositories\Mobile\MobileRepository::class
         );
+        $this->app->bind(
+            \App\Repositories\Worksheet\WorksheetRepositoryContract::class,
+            \App\Repositories\Worksheet\WorksheetRepository::class
+        );
     }
 }

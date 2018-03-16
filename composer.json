@@ -26,6 +26,7 @@
         "zizaco/entrust": "1.7.*",
         "laravel/tinker": "^1.0",
         "maatwebsite/excel": "^2.1",
+        "proai/laravel-handlebars": "~1.5.0",
         "laravel/dusk": "^1.0"
     },
     "require-dev": {

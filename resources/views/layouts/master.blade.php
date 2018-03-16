@@ -8,9 +8,15 @@
     <link href="{{ URL::asset('css/jquery.dataTables.min.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ URL::asset('css/dropzone.css') }}" rel="stylesheet" type="text/css">
         <link href="{{ URL::asset('css/jquery.atwho.min.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ URL::asset('css/bootstrap.min.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ URL::asset('css/bootstrap-theme.min.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ URL::asset('css/bootstrap-table.min.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ URL::asset('css/jquery-confirm.min.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ URL::asset('css/jquery-ui.min.css') }}" rel="stylesheet" type="text/css">
 
     <link rel="stylesheet" href="{{ asset(elixir('css/app.css')) }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+    @stack('links')
     <meta name="csrf-token" content="{{ csrf_token() }}"/>
 </head>
 <body>
@@ -89,10 +95,20 @@ $('body').click(function(e) {
             <p class=" list-group-item siderbar-top" title=""><img src="{{url('images/flarepoint_logo.png')}}" alt=""></p>
             <a href="{{route('dashboard', \Auth::id())}}" class=" list-group-item" data-parent="#MainMenu"><i
                         class="glyphicon sidebar-icon glyphicon-dashboard"></i><span id="menu-txt">{{ __('Dashboard') }}</span> </a>
+            <!--
             <a href="{{route('users.show', \Auth::id())}}" class=" list-group-item" data-parent="#MainMenu"><i
                         class="glyphicon sidebar-icon glyphicon-user"></i><span id="menu-txt">{{ __('Profile') }}</span> </a>
+             -->
+            <a href="{{route('worksheet.list')}}" class=" list-group-item" data-parent="#MainMenu"><i
+                        class="glyphicon sidebar-icon glyphicon-expand"></i><span id="menu-txt">工单处理</span> </a>
+            <a href="#" class=" list-group-item" data-parent="#MainMenu"><i
+                        class="glyphicon sidebar-icon glyphicon-import"></i><span id="menu-txt">回库处理</span> </a>
+            <a href="#" class=" list-group-item" data-parent="#MainMenu"><i
+                        class="glyphicon sidebar-icon glyphicon-yen"></i><span id="menu-txt">退款处理</span> </a>
+            <a href="#" class=" list-group-item" data-parent="#MainMenu"><i
+                        class="glyphicon sidebar-icon glyphicon-stats"></i><span id="menu-txt">统计分析</span> </a>
 
-
+<!--
             <a href="#clients" class=" list-group-item" data-toggle="collapse" data-parent="#MainMenu"><i
                         class="glyphicon sidebar-icon glyphicon-tag"></i><span id="menu-txt">{{ __('Clients') }}</span>
             <i class="ion-chevron-up  arrow-up sidebar-arrow"></i></a>
@@ -114,6 +130,7 @@ $('body').click(function(e) {
                     <a href="{{ route('tasks.create')}}" class="list-group-item childlist">{{ __('New Task') }}</a>
                 @endif
             </div>
+            -->
 
             <a href="#user" class=" list-group-item" data-toggle="collapse" data-parent="#MainMenu"><i
                         class="sidebar-icon fa fa-users"></i><span id="menu-txt">{{ __('Users') }}</span>
@@ -126,6 +143,7 @@ $('body').click(function(e) {
                 @endif
             </div>
 
+            <!--
             <a href="#leads" class=" list-group-item" data-toggle="collapse" data-parent="#MainMenu"><i
                         class="glyphicon sidebar-icon glyphicon-hourglass"></i><span id="menu-txt">{{ __('Leads') }}</span>
             <i class="ion-chevron-up  arrow-up sidebar-arrow"></i></a>
@@ -164,6 +182,7 @@ $('body').click(function(e) {
 
 
             @endif
+            -->
             <a href="{{ url('/logout') }}" class=" list-group-item impmenu" data-parent="#MainMenu"><i
                         class="glyphicon sidebar-icon glyphicon-log-out"></i><span id="menu-txt">{{ __('Sign Out') }}</span> </a>
 
@@ -200,10 +219,15 @@ $('body').click(function(e) {
 </div>
     <script type="text/javascript" src="{{ URL::asset('js/app.js') }}"></script>
     <script type="text/javascript" src="{{ URL::asset('js/dropzone.js') }}"></script>
+    <script type="text/javascript" src="{{ URL::asset('js/jquery-2.1.0.min.js') }}"></script>
     <script type="text/javascript" src="{{ URL::asset('js/jquery.dataTables.min.js') }}"></script>
     <script type="text/javascript" src="{{ URL::asset('js/jasny-bootstrap.min.js') }}"></script>
     <script type="text/javascript" src="{{ URL::asset('js/jquery.caret.min.js') }}"></script>
-        <script type="text/javascript" src="{{ URL::asset('js/jquery.atwho.min.js') }}"></script>
+    <script type="text/javascript" src="{{ URL::asset('js/bootstrap.min.js') }}"></script>
+    <script type="text/javascript" src="{{ URL::asset('js/bootstrap-table.min.js') }}"></script>
+    <script type="text/javascript" src="{{ URL::asset('js/jquery.atwho.min.js') }}"></script>
+    <script type="text/javascript" src="{{ URL::asset('js/jquery-confirm.min.js') }}"></script>
+    <script type="text/javascript" src="{{ URL::asset('js/jquery-ui.min.js') }}"></script>
 @stack('scripts')
 </body>
 

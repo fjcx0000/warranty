@@ -71,8 +71,16 @@
                     </select>
                 </div>
                 <div class="ui-field-contain">
+                    <label for="issueCode">服务原因</label>
+                    <select name="issueCode" id="issueCode" required>
+                        <option></option>
+                        <option value="F001">产品质量问题</option>
+                        <option value="O001">厂商发错货</option>
+                        <option value="T001">客户原因退换货</option>
+                    </select>
+                <div class="ui-field-contain">
                     <label for="channelServiceReq">备注说明:</label>
-                    <textarea data-mini="true" cols="40" rows="8" name="channelServiceReq" id="channelServiceReq"></textarea>
+                    <textarea data-mini="true" cols="40" rows="8" name="channelServiceReq" id="channelServiceReq" required></textarea>
                 </div>
                 <input type="submit" data-icon="check" value="提交" id="sheetApplySubmit"/>
             </form>
@@ -80,10 +88,10 @@
         <div data-role="popup" id="popupSheetApplyResp" data-dismissible="false" class="ui-corner-all">
             <div role="main" class="ui-content">
                 <h4 id="sheetApplyRespMsg"></h4>
+                <input type="text" id="uploadUrl" readonly>
                 <div align="center">
-                    <a href="#mainPage" data-role="button" data-ajax="false" data-rel="back" data-transition="flow"
-                       data-inline="true" class="ui-btn-active">结束</a>
-                    <a data-role="button" data-rel="back" data-inline="true">取消</a>
+                    <button id="copySelect">复制链接</button>
+                    <a href="#mainPage" data-role="button" data-icon="back">返回</a>
                 </div>
             </div>
         </div>
@@ -97,6 +105,10 @@
 <script type="text/javascript" src="{{ URL::asset('js/autoComplete.js/code.js') }}"></script>
 
 <script>
+    $('#sheetApplyPage').on('pageshow',function(){
+        $('#sheetApplyForm')[0].reset();
+        $('#copySelect').text("复制链接");
+    });
     $('#pwdChgSubmit').on('click', function(event){
         if ($('#password').val() != $('#password2').val())
         {
@@ -128,6 +140,10 @@
                     $('#popupPwdChgResp').popup('open');
                     setTimeout(function(){$('#popupPwdChgResp').popup('close');}, 1000);
                     //$.mobile.changePage("#mainPage");
+                },
+                error: function(XMLHttpRequest, textStatus) {
+                    alert("服务器处理错误: "+XMLHttpRequest.status+", "+
+                    XMLHttpRequest.readyState+", "+textStatus);
                 }
             });
         }
@@ -150,13 +166,19 @@
             },
             success: function(data) {
                 $('#sheetApplyRespMsg').empty();
-                $('#sheetApplyRespMsg').text("运维工单已生成，工单号是<b>"+data+"</b>.");
+                $('#sheetApplyRespMsg').html("运维工单已生成，工单号是<b>"+data+"</b>,上传链接如下：<br>");
+                $('#uploadUrl').val("{{ config('warranty.website') }}"+
+                    "mobile/clientconfirm?clientMobile="+$('#clientMobile').val()+"&"+"sheetCode="+data);
                 $('#popupSheetApplyResp').popup();
                 $('#popupSheetApplyResp').popup('open');
             }
         });
 
         return false;
+    });
+    $("#copySelect").click(function(){
+        $("#uploadUrl").select();
+        $(this).text("点击链接进行复制");
     });
 
     $("#searchField").autocomplete({
@@ -204,6 +226,7 @@
         });
 
     });
+
 
     function getGoodsno(str)
     {

@@ -133,4 +133,22 @@ Route::group(['prefix' => 'mobile'],function() {
     Route::post('/worksheetupload','MobileController@worksheetUpload')->name('mobile.worksheetupload');
     Route::post('/imageupload','MobileController@imageUpload')->name('mobile.imageupload');
 
+
+    Route::get('/worksheetenqindex','MobileController@worksheetEnqIndex')->name('mobile.worksheetenqindex');
+});
+
+/**
+ * Worksheet
+ */
+Route::group(['prefix' => 'worksheet'],function() {
+    Route::get('/list','WorksheetController@worksheetIndex')->name('worksheet.list');
+    Route::get('/getworksheets','WorksheetController@getWorksheets')->name('worksheet.getWorksheets');
+    Route::get('/getworksheetdetails','WorksheetController@getWorksheetDetails')->name('worksheet.getWorksheetdetails');
+    Route::get('/getcarriers','WorksheetController@getCarriers')->name('worksheet.getcarriers');
+    Route::get('/getsuppliers','WorksheetController@getSuppliers')->name('worksheet.getsuppliers');
+
+    Route::post('/processauth','WorksheetController@processAuth')->name('worksheet.processauth');
+    Route::post('/processwaitshoes','WorksheetController@processWaitshoes')->name('worksheet.processwaitshoes');
+    Route::post('/processrepair','WorksheetController@processRepair')->name('worksheet.processrepair');
+    Route::post('/processsendback','WorksheetController@processSendback')->name('worksheet.processsendback');
 });

@@ -16,11 +16,11 @@
             <form method="get" action="{{route('mobile.worksheetuploadindex')}}" data-ajax="false">
                 <div class="ui-field-contain">
                     <label for="sheetCode">工单号:<span>*</span></label>
-                    <input type="text" name="sheetCode" id="sheetCode" required value=""  />
+                    <input type="text" name="sheetCode" id="sheetCode" required value="{{ $sheetCode }}"  />
                 </div>
                 <div class="ui-field-contain">
                     <label for="clientMobile">手机号:<span>*</span></label>
-                    <input type="number" name="clientMobile" id="clientMobile" required value=""  />
+                    <input type="number" name="clientMobile" id="clientMobile" required value="{{ $clientMobile }}"  />
                 </div>
                 {{ csrf_field() }}
                 <input type="submit" data-inline="true" value="提交" data-theme="b">

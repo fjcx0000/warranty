@@ -28,17 +28,15 @@
                 <div class="small-box bg-aqua">
                     <div class="inner">
                         <h3>
-                            @foreach($taskCompletedThisMonth as $thisMonth)
-                                {{$thisMonth->total}}
-                            @endforeach
+                            {{ $countAuth }}
                         </h3>
 
-                        <p>{{ __('Tasks completed this month') }}</p>
+                        <p>待审核</p>
                     </div>
                     <div class="icon">
-                        <i class="ion ion-ios-book-outline"></i>
+                        <i class="ion ion-ios-eye-outline"></i>
                     </div>
-                    <a href="{{route('tasks.index')}}" class="small-box-footer">{{ __('All Tasks') }} <i
+                    <a href="{{route('worksheet.list', ['processPhase' => 'auth'])}}" class="small-box-footer">处理工单 <i
                                 class="fa fa-arrow-circle-right"></i></a>
                 </div>
             </div>
@@ -48,17 +46,15 @@
                 <div class="small-box bg-green">
                     <div class="inner">
                         <h3>
-                            @foreach($leadCompletedThisMonth as $thisMonth)
-                                {{$thisMonth->total}}
-                            @endforeach
+                            {{ $countWaitshoes }}
                         </h3>
 
-                        <p>{{ __('Leads completed this month') }}</p>
+                        <p>待客户寄鞋</p>
                     </div>
                     <div class="icon">
-                        <i class="ion ion-stats-bars"></i>
+                        <i class="ion ion-ios-download-outline"></i>
                     </div>
-                    <a href="{{route('leads.index')}}" class="small-box-footer">{{ __('All Leads') }} <i
+                    <a href="{{route('worksheet.list', ['processPhase' => 'waitshoes'])}}" class="small-box-footer">处理工单 <i
                                 class="fa fa-arrow-circle-right"></i></a>
                 </div>
             </div>
@@ -67,14 +63,14 @@
                 <!-- small box -->
                 <div class="small-box bg-yellow">
                     <div class="inner">
-                        <h3>{{$totalClients}}</h3>
+                        <h3>{{$countRepair}}</h3>
 
-                        <p>{{ __('All Clients') }}</p>
+                        <p>待工厂维修</p>
                     </div>
                     <div class="icon">
-                        <i class="ion ion-person"></i>
+                        <i class="ion ion-wrench"></i>
                     </div>
-                    <a href="{{route('clients.index')}}" class="small-box-footer">{{ __('All clients') }} <i
+                    <a href="{{route('worksheet.list', ['processPhase' => 'repair'])}}" class="small-box-footer">处理工单 <i
                                 class="fa fa-arrow-circle-right"></i></a>
                 </div>
             </div>
@@ -84,20 +80,15 @@
                 <div class="small-box bg-red">
                     <div class="inner">
                         <h3>
-                            @foreach($totalTimeSpent[0] as $sum => $value)
+                            {{$countSendback}}
+                        </h3>
 
-                                {{$value}}
-                            @endforeach
-                            @if($value == "")
-                                0
-                            @endif</h3>
-
-                        <p>{{ __('Total hours registered') }}</p>
+                        <p>待寄回客户</p>
                     </div>
                     <div class="icon">
-                        <i class="ion ion-pie-graph"></i>
+                        <i class="ion ion-ios-upload-outline"></i>
                     </div>
-                    <a href="#" class="small-box-footer"> {{ __('More info') }} <i
+                    <a href="{{route('worksheet.list', ['processPhase' => 'sendback'])}}" class="small-box-footer">处理工单 <i
                                 class="fa fa-arrow-circle-right"></i></a>
                 </div>
             </div>

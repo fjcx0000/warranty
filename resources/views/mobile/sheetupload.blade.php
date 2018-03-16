@@ -6,7 +6,7 @@
             <a href="{{route('mobile.index')}}" data-role="button" data-icon="back">返回</a>
             <h1>售后服务信息上传</h1>
         </div>
-        <li data-role="main" class="ui-content">
+        <div data-role="main" class="ui-content">
             <form method="post" id="uploadForm" action="{{route('mobile.worksheetupload')}}" enctype="multipart/form-data">
                 <ul data-role="listview" data-inset="true">
                     <li data-role="list-divider">工单基本信息</li>
@@ -39,7 +39,7 @@
                     <li class="ui-field-contain">
                         <a>
                             <label for="name">地区选择:</label>
-                            <input class="sg-area-result" type="text" readonly name="strArea" id="strArea" required >
+                            <input class="sg-area-result" type="text" readonly name="strArea" id="strArea" placeholder="请选择地区" required >
                         </a>
                         <a id="selectBtn" data-icon="search">选择</a>
                     </li>
@@ -59,11 +59,11 @@
                     </li>
                     <li class="ui-field-contain">
                         <label for="clientReceiverName">收件人姓名:</label>
-                        <input type="text" name="clientReceiverName" id="clientReceiverName" required value=""  />
+                        <input type="text" name="clientReceiverName" id="clientReceiverName" data-clear-btn="true" required value="{{ $clientName }}"  />
                     </li>
                     <li class="ui-field-contain">
                         <label for="clientReceiverMobile">收件人手机号:</label>
-                        <input type="number" name="clientReceiverMobile" id="clientReceiverMobile" required value=""  />
+                        <input type="number" name="clientReceiverMobile" id="clientReceiverMobile" data-clear-btn="true" required value="{{ $clientMobile }}"  />
                     </li>
                     <li data-role="list-divider">问题说明</li>
                     <li class="ui-field-contain">
@@ -76,7 +76,7 @@
                         <div id="picWholeShow" style="width:300px;height:300px;border:1px solid #000000;"><img src="nopic.jpg" /></div>
                     </li>
                     <li class="ui-field-contain">
-                        <label for="picDamage">鞋破损图:</label>
+                        <label for="picDamage">鞋破损图: <a href="#popupDamagePicTip" data-rel="popup" data-transition="pop" class="ui-btn ui-alt-icon ui-nodisc-icon ui-btn-inline ui-icon-info ui-btn-icon-notext" title="了解更多">了解更多</a></label>
                         <input type="file" id="picDamage" name="picDamage" accept="image/*" draggable="true" required single/>
                         <div id="picDamageShow" style="width:300px;height:300px;border:1px solid #000000;"><img src="nopic.jpg" /></div>
                     </li>
@@ -93,15 +93,16 @@
                 </ul>
             </form>
         </div>
-        <div data-role="popup" id="popupSheetUploadResp" data-dismissible="false" class="ui-corner-all">
+        <div data-role="popup" id="popupSheetUploadResp" data-overlay-theme="a" data-theme="a" data-dismissible="false" class="ui-corner-all">
             <div role="main" class="ui-content">
-                <h4 id="sheetUploadRespMsg"></h4>
+                <p id="sheetUploadRespMsg"></p>
                 <div align="center">
-                    <a href="{{route('mobile.index')}}" data-role="button" data-ajax="false" data-rel="back" data-transition="flow"
-                       data-inline="true" class="ui-btn-active">结束</a>
-                    <a data-role="button" data-rel="back" data-inline="true">取消</a>
+                    <a href="{{route('mobile.index')}}" data-role="button" data-icon="back">返回</a>
                 </div>
             </div>
+        </div>
+        <div data-role="popup" id="popupDamagePicTip" class="ui-content" data-theme="a">
+            <p>其他情况如发错鞋或不合脚换鞋等请上传鞋底标或者盒标确认</p>
         </div>
     </div>
 @stop
@@ -146,7 +147,7 @@
                 },
                 success: function(data) {
                     $('#sheetUploadRespMsg').empty();
-                    $('#sheetUploadRespMsg').text("运维工单更新成功！");
+                    $('#sheetUploadRespMsg').html("运维工单更新成功！<br>请在一个工作日后查询审核结果，确认<b>审核同意</b>后邮寄鞋子，并上传快递单信息<br>");
                     $('#popupSheetUploadResp').popup();
                     $('#popupSheetUploadResp').popup('open');
                 },
