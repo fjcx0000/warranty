@@ -17,6 +17,7 @@ class ViewComposerServiceProvider extends ServiceProvider
             ['users.show'],
             'App\Http\ViewComposers\UserHeaderComposer'
         );
+        /*
         view()->composer(
             ['clients.show'],
             'App\Http\ViewComposers\ClientHeaderComposer'
@@ -33,6 +34,7 @@ class ViewComposerServiceProvider extends ServiceProvider
             ['invoices.show'],
             'App\Http\ViewComposers\InvoiceHeaderComposer'
         );
+        */
     }
 
     /**

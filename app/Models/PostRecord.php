@@ -16,7 +16,8 @@ class PostRecord extends Model
     }
     public function carrier()
     {
-        return $this->belongsTo('App\Models\Carrier', 'carrierID');
+        if ($this->carrierID)
+            return $this->belongsTo('App\Models\Carrier', 'carrierID');
     }
     public function getTypeNameAttribute()
     {
@@ -24,6 +25,7 @@ class PostRecord extends Model
     }
     public function getTrackURLAttribute()
     {
-        return $this->carrier->trackURL;
+        if ($this->carrierID)
+            return $this->carrier->trackURL;
     }
 }

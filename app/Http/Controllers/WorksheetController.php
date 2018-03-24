@@ -75,8 +75,10 @@ class WorksheetController extends Controller
 
         return Datatables::of($worksheets)
             ->addColumn('operations', function ($worksheet) {
-                if ($worksheet->status != 0)
+                if ($worksheet->status == 1)
                     return '<button class="btn btn-xs btn-info btnWorksheetDetail" data-id="'.$worksheet->sheetCode.'"><span class="glyphicon glyphicon-log-in"></span> 查看</button>';
+                else if($worksheet->status == 2)
+                    return '<button class="btn btn-xs btn-danger btnWorksheetDetail" data-id="'.$worksheet->sheetCode.'"><span class="glyphicon glyphicon-log-in"></span> 查看</button>';
                 else
                     return '<button class="btn btn-xs btn-primary btnWorksheetDetail" data-id="'.$worksheet->sheetCode.'"><span class="glyphicon glyphicon-log-in"></span> 处理</button>'
                         .'<button class="btn btn-xs btn-success btnWorksheetPrint" data-id="'.$worksheet->sheetCode.'"><span class="glyphicon glyphicon-print"></span> 打印</button>';
@@ -146,6 +148,16 @@ class WorksheetController extends Controller
         ]);
 
         return $this->worksheetRepo->processSendback($request);
+    }
+    public function changeStatus(Request $request)
+    {
+        $this->validate($request,[
+            'sheetCode'=>'required',
+            'status'=>'required',
+        ]);
+
+        return $this->worksheetRepo->changeStatus($request);
+
     }
 
 }

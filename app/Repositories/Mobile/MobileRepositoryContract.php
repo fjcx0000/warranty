@@ -17,5 +17,6 @@ interface MobileRepositoryContract
 
     public function uploadWorkSheet($request);
 
+    public function uploadPostrecord($request);
 }
 

@@ -28,14 +28,14 @@
         <input type="hidden" name="sku" id="sku">
     </div>
     <div class="row clearfix form-inline" style="border:1px solid #a1a1a1 ;margin:10px 2px; padding:10px 2px;border-radius: 5px">
-        <div class="col-sm-3 form-group">
+        <div class="col-sm-4 form-group">
             <label for="input-serviceType" class="control-label text-right">处理方式&nbsp;&nbsp;</label>
             <input type="radio" name="input-serviceType" id="input-serviceType" value="X" > 维修
             <input type="radio" name="input-serviceType" id="input-serviceType" value="H" > 更换
             <input type="radio" name="input-serviceType" id="input-serviceType" value="T" > 退货
             <input type="radio" name="input-serviceType" id="input-serviceType" value="G" > 协商
         </div>
-        <div class="col-sm-3 form-group">
+        <div class="col-sm-4 form-group">
             <label for="input-issueCode" class="control-label col-sm-4 text-right">服务原因</label>
             <div class="col-sm-8">
                 <select name="input-issueCode" id="input-issueCode">
@@ -45,13 +45,14 @@
                 </select>
             </div>
         </div>
-        <div class="form-group col-sm-6">
+        <div class="form-group col-sm-4">
             <label for="input-remark" class="col-sm-3 control-label text-right">处理备注</label>
             <div class="col-sm-9">
                 <textarea class="form-control input-sm" rows="3" name="input-remark" id="input-remark"></textarea>
             </div>
         </div>
     </div>
+    <!--
     <div class="row clearfix form-inline hidden" id="carrierinfo" style="border:1px solid #a1a1a1 ;margin:10px 2px; padding:10px 2px;border-radius: 5px">
         <div class="col-sm-4 column form-group">
             <label for="input-carrierName" class="control-label col-sm-4 text-right">快递公司</label>
@@ -72,6 +73,7 @@
             </div>
         </div>
     </div>
+    -->
     <div class="row clearfix form-inline hidden" id="negotiation" style="border:1px solid #a1a1a1 ;margin:10px 2px; padding:10px 2px;border-radius: 5px">
         <div class="form-group col-sm-8">
             <label for="input-content" class="col-sm-2 control-label text-right">协商结果</label>

@@ -16,6 +16,8 @@
 
                 });
             });
+
+            $("#statPeriod option[value='{{$statPeriod}}']").attr("selected", true);
         });
     </script>
 @endpush
@@ -96,30 +98,35 @@
         </div>
         <!-- /.row -->
 
-        <?php $createdTaskEachMonths = array(); $taskCreated = array();?>
-        @foreach($createdTasksMonthly as $task)
-            <?php $createdTaskEachMonths[] = date('F', strTotime($task->created_at)) ?>
-            <?php $taskCreated[] = $task->month;?>
+
+        <?php $createdWorksheetEachDays = array(); $worksheetCreated = array();?>
+        @foreach($createdWorksheetDaily as $worksheet)
+            <?php $createdWorksheetEachDays[] = date('m-d', strTotime($worksheet->created_at)) ?>
+            <?php $worksheetCreated[] = $worksheet->daily;?>
         @endforeach
 
-        <?php $completedTaskEachMonths = array(); $taskCompleted = array();?>
+        <?php $completedWorksheetEachDays = array(); $worksheetCompleted = array();?>
 
-        @foreach($completedTasksMonthly as $tasks)
-            <?php $completedTaskEachMonths[] = date('F', strTotime($tasks->updated_at)) ?>
-            <?php $taskCompleted[] = $tasks->month;?>
+        @foreach($completedWorksheetDaily as $worksheet)
+            <?php $completedWorksheetEachDays[] = date('m-d', strTotime($worksheet->updated_at)) ?>
+            <?php $worksheetCompleted[] = $worksheet->daily;?>
         @endforeach
-
-        <?php $completedLeadEachMonths = array(); $leadsCompleted = array();?>
-        @foreach($completedLeadsMonthly as $leads)
-            <?php $completedLeadEachMonths[] = date('F', strTotime($leads->updated_at)) ?>
-            <?php $leadsCompleted[] = $leads->month;?>
-        @endforeach
-
-        <?php $createdLeadEachMonths = array(); $leadCreated = array();?>
-        @foreach($createdLeadsMonthly as $lead)
-            <?php $createdLeadEachMonths[] = date('F', strTotime($lead->created_at)) ?>
-            <?php $leadCreated[] = $lead->month;?>
-        @endforeach
+        <div class="row">
+            <div class="md-col-12i pull-right">
+                <form class="form-inline" action="{{route('dashboard')}}">
+                    <div class="form-group">
+                        <label for="statPeriod">统计周期</label>
+                        <select name="statPeriod" id="statPeriod">
+                            <option value="7">7天</option>
+                            <option value="30">30天</option>
+                            <option value="90">90天</option>
+                            <option value="180">180天</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-xs">提交</button>
+                </form>
+            </div>
+        </div>
         <div class="row">
 
             @include('partials.dashboardone')

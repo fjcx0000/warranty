@@ -15,7 +15,7 @@
             @endif
             <a href="#sheetApplyPage" class="ui-btn">申请运维工单号</a>
             <p>&nbsp;</p>
-            <button id="enquery">查询运维服务</button>
+            <a href="{{route('mobile.worksheetenqindex')}}" data-ajax="false" class="ui-btn">查询运维服务工单</a>
             <p>&nbsp;</p>
             <a href="#pwdChgPage" class="ui-btn">修改登录密码</a>
         </div>

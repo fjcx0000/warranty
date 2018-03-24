@@ -13,6 +13,7 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
+        /*
         'App\Events\ClientAction' => [
             'App\Listeners\ClientActionNotify',
             'App\Listeners\ClientActionLog',
@@ -25,6 +26,7 @@ class EventServiceProvider extends ServiceProvider
             'App\Listeners\LeadActionNotify',
             'App\Listeners\LeadActionLog',
         ],
+        */
         'App\Events\NewComment' => [
             'App\Listeners\NotiftyMentionedUsers'
         ]

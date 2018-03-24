@@ -20,6 +20,7 @@ use App\Models\ClientPayment;
 use Storage;
 use Carbon;
 use Auth;
+use DB;
 
 
 class WorksheetRepository implements WorksheetRepositoryContract
@@ -32,6 +33,7 @@ class WorksheetRepository implements WorksheetRepositoryContract
         $worksheet->picBottom = Storage::url($worksheet->picBottom);
 
         $worksheet->serviceTypeName = config('warranty.serviceTypeName.'.$worksheet->serviceType);
+        $worksheet->processPhaseName = config('warranty.processPhaseName.'.$worksheet->processPhase);
         $worksheet->issueCodeName = config('warranty.issueCodeName.'.$worksheet->issueCode);
 
         return $worksheet;
@@ -41,9 +43,6 @@ class WorksheetRepository implements WorksheetRepositoryContract
     {
         $worksheet = WorkSheet::where('sheetcode', $request->sheetCode)->get()->first();
 
-        $remark = "服务方式:".config('warranty.serviceTypeName.'.$request->serviceType)
-            .'<br>备注信息'.$request->remark;
-        $this->writeLog($worksheet,$remark);
 
         if ($worksheet->sku != $request->sku) {
             $product = Product::find($request->sku);
@@ -64,7 +63,10 @@ class WorksheetRepository implements WorksheetRepositoryContract
                 $clientpayment->method = $request->paymentMethod;
                 $clientpayment->amount = $request->paymentAmount;
                 $clientpayment->save();
+                $remark = "服务方式:".config('warranty.serviceTypeName.'.$request->serviceType).'-审核同意，等待客户寄回（客户付费）<br>备注信息:'.$request->remark;
+                $this->writeLog($worksheet,$remark);
             } else {
+                /*
                 $postrecord = new PostRecord;
                 $postrecord->sheetID = $worksheet->id;
                 $postrecord->type = 'R';
@@ -74,6 +76,9 @@ class WorksheetRepository implements WorksheetRepositoryContract
                 $postrecord->fee = $request->fee;
                 $postrecord->itemDesc = $worksheet->goodsno."-".$worksheet->goodsname."-".$worksheet->colordesc."-".$worksheet->sizedesc;
                 $postrecord->save();
+                */
+                $remark = "服务方式:".config('warranty.serviceTypeName.'.$request->serviceType).'-审核同意，等待客户寄回（到付）<br>备注信息:'.$request->remark;
+                $this->writeLog($worksheet,$remark);
             }
             $worksheet->processPhase = 'waitshoes';
         } else {  //记录协商结果
@@ -82,6 +87,8 @@ class WorksheetRepository implements WorksheetRepositoryContract
             $negotiationrecord->content = $request->content;
             $negotiationrecord->compensation = $request->compensation;
             $negotiationrecord->save();
+            $remark = "服务方式:".config('warranty.serviceTypeName.'.$request->serviceType).'-审核同意，协商解决<br>备注信息:'.$request->remark;
+            $this->writeLog($worksheet,$remark);
             $worksheet->status = 1; //close
             $worksheet->processPhase = 'finish';
         }
@@ -96,7 +103,7 @@ class WorksheetRepository implements WorksheetRepositoryContract
         $worksheet = WorkSheet::where('sheetcode', $request->sheetCode)->get()->first();
         //记录日志
         $remark = "服务方式:".config('warranty.serviceTypeName.'.$request->serviceType)
-            .'<br>备注信息'.$request->remark;
+            .'-鞋已收到<br>备注信息'.$request->remark;
         if ($worksheet->serviceType == 'H') {  //换鞋
             $product = Product::find($request->newsku);
             $remark .= "<br> 更换为:".$product->goodsno."-".$product->goodsname."-".$product->colordesc."-".$product->sizedesc;
@@ -114,6 +121,20 @@ class WorksheetRepository implements WorksheetRepositoryContract
         $worksheet->serviceType = $request->serviceType;
         $worksheet->supplierID = $request->supplierID;
         $worksheet->issueCode = $request->issueCode;
+        if ($worksheet->issueCode != 'T001') {
+            $postrecord = PostRecord::firstOrCreate([
+                ['sheetID', $worksheet->id],
+                ['type', 'R']
+            ]);
+            $postrecord->sheetID = $worksheet->id;
+            $postrecord->type = 'R';
+            $postrecord->carrierID = 0;
+            $postrecord->carrierName = $request->carrierName;
+            $postrecord->trackNumber = $request->trackNumber;
+            $postrecord->fee = $request->fee;
+            $postrecord->itemDesc = $worksheet->goodsno."-".$worksheet->goodsname."-".$worksheet->colordesc."-".$worksheet->sizedesc;
+            $postrecord->save();
+        }
 
         if ($worksheet->serviceType == 'X') { //修鞋
             $repairrecord = new RepairRecord;
@@ -174,7 +195,10 @@ class WorksheetRepository implements WorksheetRepositoryContract
     {
         $worksheet = WorkSheet::where('sheetcode', $request->sheetCode)->get()->first();
 
-        $postrecord = new PostRecord;
+        $postrecord = PostRecord::firstOrCreate([
+            ['sheetID', $worksheet->id],
+            ['type', 'S']
+        ]);
         $postrecord->sheetID = $worksheet->id;
         $postrecord->type = 'S';
         $postrecord->carrierID = $request->carrierID;
@@ -202,6 +226,43 @@ class WorksheetRepository implements WorksheetRepositoryContract
     public function getWorksheetPhaseCount($processPhase)
     {
         return WorkSheet::where('processPhase', $processPhase)->count();
+    }
+
+    public function getWorksheetServiceCount($serviceType, $statPeriod)
+    {
+        return WorkSheet::where([
+            ['serviceType', '=', $serviceType],
+            ['created_at', '>', Carbon::now()->subDays($statPeriod)],
+        ])->count();
+    }
+
+    public function getWorksheetDailyCreated($statPeriod)
+    {
+        return DB::table('work_sheet')
+            ->select(DB::raw('count(*) as daily, created_at'))
+            ->where('created_at', '>', Carbon::now()->subDays($statPeriod))
+            ->groupBy(DB::raw('YEAR(created_at), MONTH(created_at), DAY(created_at)'))
+            ->get();
+    }
+
+    public function getWorksheetDailyCompleted($statPeriod)
+    {
+        return DB::table('work_sheet')
+            ->select(DB::raw('count(*) as daily, updated_at'))
+            ->where('status', 1)
+            ->where('updated_at', '>', Carbon::now()->subDays($statPeriod))
+            ->groupBy(DB::raw('YEAR(updated_at), MONTH(updated_at), DAY(updated_at)'))
+            ->get();
+    }
+
+    public function changeStatus($request)
+    {
+        $worksheet = WorkSheet::where('sheetcode', $request->sheetCode)->get()->first();
+        //记录日志
+        $remark = "订单状态更改为".config('warranty.statusName.'.$request->status);
+        $this->writeLog($worksheet,$remark);
+        $worksheet->status = $request->status;
+        $worksheet->save();
     }
 
     private function writeLog($worksheet,$remark)

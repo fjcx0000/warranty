@@ -39,6 +39,7 @@ class AccessServiceProvider extends ServiceProvider
             \App\Repositories\Setting\SettingRepositoryContract::class,
             \App\Repositories\Setting\SettingRepository::class
         );
+        /*
         $this->app->bind(
             \App\Repositories\Task\TaskRepositoryContract::class,
             \App\Repositories\Task\TaskRepository::class
@@ -55,6 +56,7 @@ class AccessServiceProvider extends ServiceProvider
             \App\Repositories\Invoice\InvoiceRepositoryContract::class,
             \App\Repositories\Invoice\InvoiceRepository::class
         );
+        */
         $this->app->bind(
             \App\Repositories\Mobile\MobileRepositoryContract::class,
             \App\Repositories\Mobile\MobileRepository::class

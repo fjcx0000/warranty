@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Repositories\Mobile\MobileRepositoryContract;
+use App\Repositories\Worksheet\WorksheetRepositoryContract;
 use DB;
 use Storage;
 use App\Models\WorkSheet;
@@ -17,10 +18,14 @@ class MobileController extends Controller
         'XS','S','M','L','XL',
         '4\5','6\7','8\9','10\11','12\13','1\2'];
     protected $mobileRepo;
+    protected $worksheetRepo;
 
-    public function __construct(MobileRepositoryContract $mobileRepo)
+    public function __construct(
+        MobileRepositoryContract $mobileRepo,
+        WorksheetRepositoryContract $worksheetRepo)
     {
         $this->mobileRepo = $mobileRepo;
+        $this->worksheetRepo = $worksheetRepo;
     }
 
     public function index()
@@ -240,5 +245,73 @@ class MobileController extends Controller
     {
         return view('mobile.sheetenquiry');
     }
+    public function getWorksheetList(Request $request)
+    {
+        if (!$request->session()->has('agentChannelID')) { //client
+            if($request->has('sheetCode'))
+                $sheetCode = $request->sheetCode;
+            else
+                $sheetCode = "";
+            if($request->has('clientMobile'))
+                $clientMobile = $request->clientMobile;
+            else
+                $clientMobile = "";
+            $channelID = "%";
+        } else { //agent
+            if($request->has('sheetCode'))
+                $sheetCode = "%".$request->sheetCode."%";
+            else
+                $sheetCode = "%";
+            if($request->has('clientMobile'))
+                $clientMobile = "%".$request->clientMobile."%";
+            else
+                $clientMobile = "%";
+            $channelID = $request->session()->get('agentChannelID');
+        }
+        $sheetlist = DB::table('work_sheet')
+            ->select('sheetCode','clientName','clientMobile','serviceType','processPhase')
+            ->where(function ($query) use($sheetCode,$clientMobile,$channelID) {
+                $query->where([
+                    ['sheetCode','like', $sheetCode],
+                    ['channelID', 'like', $channelID]
+                ]);
+            })->orWhere(function ($query) use($sheetCode,$clientMobile,$channelID) {
+                $query->where([
+                    ['clientMobile','like', $clientMobile],
+                    ['channelID', 'like', $channelID]
+                ]);
+            })->get();
+        $sheetlist = $sheetlist->map(function($item,$key){
+            $item->serviceTypeName = config('warranty.serviceTypeName.'.$item->serviceType);
+            $item->processPhaseName = config('warranty.processPhaseName.'.$item->processPhase);
+            return $item;
+        });
+        return $sheetlist;
+    }
+    public function getWorksheetDetails(Request $request)
+    {
+        $this->validate($request,[
+            'sheetCode'=>'required',
+        ]);
 
+        $worksheet = $this->worksheetRepo->getWorksheetDetails($request->sheetCode);
+
+        return $worksheet;
+
+    }
+    public function uploadPostrecord(Request $request)
+    {
+        $this->validate($request,[
+            'sheetCode'=>'required',
+            'carrierName'=>'required',
+            'trackNumber'=>'required',
+        ]);
+
+        try {
+            $this->mobileRepo->uploadPostrecord($request);
+            return "upload successfully";
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 404);
+        }
+    }
 }

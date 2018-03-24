@@ -254,6 +254,8 @@
             </div>
         </div>
         <div class="modal-footer">
+            <button type="button" id="btn-recoverSubmit" class="btn btn-primary">恢复</button>
+            <button type="button" id="btn-cancelSubmit" class="btn btn-primary">终止</button>
             <button type="button" id="btn-processSubmit" class="btn btn-primary">提交</button>
             <button type="button" id="btn-processCancel" class="btn btn-default">取消</button>
         </div>
@@ -312,13 +314,23 @@
                             $('#div-process').removeClass('hidden');
                             $('#div-process').addClass('show');
                             $('#btn-processSubmit').removeAttr('disabled');
+                            $('#btn-cancelSubmit').removeAttr('disabled');
+                            $('#btn-recoverSubmit').attr('disabled',true);
                             worksheetProcessDisplay(data);
                         }
-                        else
+                        else if (data.status == 1) //订单处理结束1
                         {
                             $('#div-process').removeClass('show');
                             $('#div-process').addClass('hidden');
                             $('#btn-processSubmit').attr('disabled',true);
+                            $('#btn-cancelSubmit').attr('disabled',true);
+                            $('#btn-recoverSubmit').attr('disabled',true);
+                        } else { //订单终止
+                            $('#div-process').removeClass('show');
+                            $('#div-process').addClass('hidden');
+                            $('#btn-processSubmit').attr('disabled',true);
+                            $('#btn-cancelSubmit').attr('disabled',true);
+                            $('#btn-recoverSubmit').removeAttr('disabled');
                         }
 
                         $('#img-whole').attr("src",data.picWhole);
@@ -354,6 +366,46 @@
                             btnClass: 'btn-blue',
                             action: function () {
                                 $('#worksheet-popup').modal('hide');
+                            }
+                        },
+                        cancel:{
+                            text: '取消',
+                            action: function () {
+                            }
+                        },
+                    }
+                });
+            });
+            $('#btn-cancelSubmit').on('click',function(){
+                $.confirm({
+                    title: '工单终止',
+                    content: '确认终止该工单吗',
+                    buttons: {
+                        confirm:{
+                            text: '确认',
+                            btnClass: 'btn-blue',
+                            action: function () {
+                                changeWorksheetStatus(2);
+                            }
+                        },
+                        cancel:{
+                            text: '取消',
+                            action: function () {
+                            }
+                        },
+                    }
+                });
+            });
+            $('#btn-recoverSubmit').on('click',function(){
+                $.confirm({
+                    title: '工单恢复',
+                    content: '确认恢复该工单吗',
+                    buttons: {
+                        confirm:{
+                            text: '确认',
+                            btnClass: 'btn-blue',
+                            action: function () {
+                                changeWorksheetStatus(0);
                             }
                         },
                         cancel:{
@@ -449,8 +501,8 @@
 
                     $('#input-issueCode').change(function(){
                         if($("input[name='input-serviceType']:checked").val() == 'G') { //协商
-                            $('#carrierinfo').removeClass('show');
-                            $('#carrierinfo').addClass('hidden');
+                           // $('#carrierinfo').removeClass('show');
+                           // $('#carrierinfo').addClass('hidden');
                             $('#paymentinfo').removeClass('show');
                             $('#paymentinfo').addClass('hidden');
                             $('#negotiation').removeClass('hidden');
@@ -461,11 +513,11 @@
                                 $('#negotiation').addClass('hidden');
                                 $('#paymentinfo').removeClass('show');
                                 $('#paymentinfo').addClass('hidden');
-                                $('#carrierinfo').removeClass('hidden');
-                                $('#carrierinfo').addClass('show');
+                            //    $('#carrierinfo').removeClass('hidden');
+                            //    $('#carrierinfo').addClass('show');
                             } else {  //客户付费换鞋
-                                $('#carrierinfo').removeClass('show');
-                                $('#carrierinfo').addClass('hidden');
+                            //    $('#carrierinfo').removeClass('show');
+                            //    $('#carrierinfo').addClass('hidden');
                                 $('#negotiation').removeClass('show');
                                 $('#negotiation').addClass('hidden');
                                 $('#paymentinfo').removeClass('hidden');
@@ -477,8 +529,8 @@
 
                     $('input[name="input-serviceType"]').change(function () {
                        if($(this).val() == 'G') { //协商
-                           $('#carrierinfo').removeClass('show');
-                           $('#carrierinfo').addClass('hidden');
+                       //    $('#carrierinfo').removeClass('show');
+                       //    $('#carrierinfo').addClass('hidden');
                            $('#paymentinfo').removeClass('show');
                            $('#paymentinfo').addClass('hidden');
                            $('#negotiation').removeClass('hidden');
@@ -489,11 +541,11 @@
                                $('#negotiation').addClass('hidden');
                                $('#paymentinfo').removeClass('show');
                                $('#paymentinfo').addClass('hidden');
-                               $('#carrierinfo').removeClass('hidden');
-                               $('#carrierinfo').addClass('show');
+                       //        $('#carrierinfo').removeClass('hidden');
+                       //        $('#carrierinfo').addClass('show');
                            } else {  //客户付费换鞋
-                               $('#carrierinfo').removeClass('show');
-                               $('#carrierinfo').addClass('hidden');
+                       //        $('#carrierinfo').removeClass('show');
+                       //        $('#carrierinfo').addClass('hidden');
                                $('#negotiation').removeClass('show');
                                $('#negotiation').addClass('hidden');
                                $('#paymentinfo').removeClass('hidden');
@@ -502,6 +554,7 @@
                        }
                     });
 
+                    /*
                     $.ajax({
                         url: '{{route('worksheet.getcarriers')}}',
                         type: "get",
@@ -515,6 +568,7 @@
                             //$('#input-carrier').selectmenu("refresh");
                         }
                     });
+                    */
 
                     $("#btn-processSubmit").unbind('click');
                     $("#btn-processSubmit").on('click', function () {
@@ -522,12 +576,14 @@
                             alert("产品信息必须设置");
                             return false;
                         }
+                        /*
                         if ($("input[name='input-serviceType']:checked").val() != 'G' && $("#input-issueCode").val() != 'T001') {
                             if ($('#input-carrierName').val() == '' || $('#input-fee').val() == '') {
                                 alert("快递公司和费用必须设置");
                                 return false;
                             }
                         }
+                        */
                         if ($("#input-issueCode").val() == 'T001' && $("input[name='input-serviceType']:checked").val() != 'H' ) {
                             if (!$('#paymentConfirm').is(':checked')) {
                                 alert("客户原因换鞋必须先确认运费已收");
@@ -552,9 +608,9 @@
                                 'sheetCode': processingSheetCode,
                                 'sku': $('#input-size').val(),
                                 'serviceType': $("input[name='input-serviceType']:checked").val(),
-                                'carrierName': $("#input-carrierName").val(),
-                                'trackNumber': $("#input-trackNumber").val(),
-                                'fee': $("#input-fee").val(),
+                                //'carrierName': $("#input-carrierName").val(),
+                                //'trackNumber': $("#input-trackNumber").val(),
+                                //'fee': $("#input-fee").val(),
                                 'content': $('#input-content').val(),
                                 'compensation': $('#input-compensation').val(),
                                 'remark': $('#input-remark').val(),
@@ -597,6 +653,12 @@
                         $('#input-goodsno').val('');
                         $('#input-color').empty();
                         $('#input-size').empty();
+                    });
+                    $.each(data.postrecord, function(i, item) {
+                       if (item.type == 'R') {
+                           $('#input-carrierName').val(item.carrierName);
+                           $('#input-trackNumber').val(item.trackNumber);
+                       }
                     });
 
                     $("#input-goodsno").typeahead({
@@ -662,6 +724,10 @@
                             $('#repairinfo').addClass('hidden');
                         }
                     });
+                    if ($("#input-issueCode").val() == 'T001') {
+                        $('#carrierinfo').removeClass('show');
+                        $('#carrierinfo').addClass('hidden');
+                    }
                     $.ajax({
                         url: '{{route('worksheet.getsuppliers')}}',
                         type: "get",
@@ -739,6 +805,13 @@
                             return false;
                         }
 
+                        if ($("#input-issueCode").val() != 'T001') {
+                            if ($('#input-carrierName').val() == '' || $('#input-fee').val() == '') {
+                                alert("快递公司和费用必须设置");
+                                return false;
+                            }
+                        }
+
                         if ($("input[name='input-serviceType']:checked").val() == 'X') {
                             if ($('#input-sendDate').val() == '' || $('#input-expectDate').val() == '') {
                                 alert("提交和预期返回日期必须设置");
@@ -758,6 +831,9 @@
                                 'sheetCode': processingSheetCode,
                                 'sku': $('#input-size').val(),
                                 'serviceType': $("input[name='input-serviceType']:checked").val(),
+                                'carrierName': $("#input-carrierName").val(),
+                                'trackNumber': $("#input-trackNumber").val(),
+                                'fee': $("#input-fee").val(),
                                 'remark': $('#input-remark').val(),
                                 'issueCode': $("#input-issueCode").val(),
                                 'supplierID': $('#input-supplier').val(),
@@ -842,6 +918,7 @@
                             }
                         });
                     });
+                    break;
                 case 'sendback':
                     template = $("#sendbackprocess-template").html();
                     html = Mustache.render(template);
@@ -900,6 +977,34 @@
                 default:
                     break;
             }
+        }
+        function changeWorksheetStatus(worksheetStatus)
+        {
+            $.ajax({
+                url: '{{route('worksheet.changestatus')}}',
+                type: "post",
+                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                data: {
+                    'sheetCode': processingSheetCode,
+                    'status': worksheetStatus,
+                },
+                success: function(data) {
+                    $.alert({
+                        title: '工单状态更改结果',
+                        content: '处理成功!',
+                        buttons: {
+                            ok: function(){
+                                $('#worksheet-popup').modal('hide');
+                                table.draw();
+                            }
+                        }
+                    });
+                },
+                error: function(XMLHttpRequest, textStatus) {
+                    alert("服务器处理错误: "+XMLHttpRequest.status+", "+
+                        XMLHttpRequest.readyState+", "+textStatus);
+                }
+            });
         }
         function getGoodsno(str)
         {

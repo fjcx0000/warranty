@@ -3,7 +3,7 @@ namespace App\Http\Controllers;
 
 use DB;
 use Carbon;
-use App\Http\Requests;
+use Illuminate\Http\Request;
 use App\Repositories\Task\TaskRepositoryContract;
 use App\Repositories\Lead\LeadRepositoryContract;
 use App\Repositories\User\UserRepositoryContract;
@@ -41,74 +41,14 @@ class PagesController extends Controller
      * Dashobard view
      * @return mixed
      */
-    public function dashboard()
+    public function dashboard(Request $request)
     {
+        if ($request->has("statPeriod")) {
+            $statPeriod = $request->statPeriod;
+        } else {
+            $statPeriod = 30;
+        }
 
-      /**
-         * Other Statistics
-         *
-         */
-        $companyname = $this->settings->getCompanyName();
-        $users = $this->users->getAllUsers();
-        $totalClients = $this->clients->getAllClientsCount();
-        $totalTimeSpent = $this->tasks->totalTimeSpent();
-
-     /**
-      * Statistics for all-time tasks.
-      *
-      */
-        $alltasks = $this->tasks->tasks();
-        $allCompletedTasks = $this->tasks->allCompletedTasks();
-        $totalPercentageTasks = $this->tasks->percantageCompleted();
-
-     /**
-      * Statistics for today tasks.
-      *
-      */
-        $completedTasksToday =  $this->tasks->completedTasksToday();
-        $createdTasksToday = $this->tasks->createdTasksToday();
-
-     /**
-      * Statistics for tasks this month.
-      *
-      */
-         $taskCompletedThisMonth = $this->tasks->completedTasksThisMonth();
-    
-
-     /**
-      * Statistics for tasks each month(For Charts).
-      *
-      */
-        $createdTasksMonthly = $this->tasks->createdTasksMothly();
-        $completedTasksMonthly = $this->tasks->completedTasksMothly();
-
-     /**
-      * Statistics for all-time Leads.
-      *
-      */
-     
-        $allleads = $this->leads->leads();
-        $allCompletedLeads = $this->leads->allCompletedLeads();
-        $totalPercentageLeads = $this->leads->percantageCompleted();
-     /**
-      * Statistics for today leads.
-      *
-      */
-        $completedLeadsToday = $this->leads->completedLeadsToday();
-        $createdLeadsToday = $this->leads->completedLeadsToday();
-
-     /**
-      * Statistics for leads this month.
-      *
-      */
-        $leadCompletedThisMonth = $this->leads->completedLeadsThisMonth();
-
-     /**
-      * Statistics for leads each month(For Charts).
-      *
-      */
-        $completedLeadsMonthly = $this->leads->createdLeadsMonthly();
-        $createdLeadsMonthly = $this->leads->completedLeadsMonthly();
 
         /**
          * satistics for workwheet processphase
@@ -118,31 +58,32 @@ class PagesController extends Controller
         $countRepair = $this->worksheets->getWorksheetPhaseCount('repair');
         $countSendback = $this->worksheets->getWorksheetPhaseCount('sendback');
 
+        /**
+         * statistics for worksheet service type in a period
+         */
+        $countServiceRepair = $this->worksheets->getWorksheetServiceCount('X', $statPeriod); //修理
+        $countExchange = $this->worksheets->getWorksheetServiceCount('H', $statPeriod); //更换
+        $countRefund = $this->worksheets->getWorksheetServiceCount('T', $statPeriod); //退货
+        $countNigotiation = $this->worksheets->getWorksheetServiceCount('G', $statPeriod); //协商
+
+        /**
+         * statistics for worksheet daily create and complete in a period
+         */
+        $createdWorksheetDaily = $this->worksheets->getWorksheetDailyCreated($statPeriod);
+        $completedWorksheetDaily = $this->worksheets->getWorksheetDailyCompleted($statPeriod);
+
         return view('pages.dashboard', compact(
-            'completedTasksToday',
-            'completedLeadsToday',
-            'createdTasksToday',
-            'createdLeadsToday',
-            'createdTasksMonthly',
-            'completedTasksMonthly',
-            'completedLeadsMonthly',
-            'createdLeadsMonthly',
-            'taskCompletedThisMonth',
-            'leadCompletedThisMonth',
-            'totalTimeSpent',
-            'totalClients',
-            'users',
-            'companyname',
-            'alltasks',
-            'allCompletedTasks',
-            'totalPercentageTasks',
-            'allleads',
-            'allCompletedLeads',
-            'totalPercentageLeads',
             'countAuth',
             'countWaitshoes',
             'countRepair',
-            'countSendback'
+            'countSendback',
+            'statPeriod',
+            'countServiceRepair',
+            'countExchange',
+            'countRefund',
+            'countNigotiation',
+            'createdWorksheetDaily',
+            'completedWorksheetDaily'
         ));
     }
 }

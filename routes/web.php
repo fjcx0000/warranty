@@ -135,6 +135,9 @@ Route::group(['prefix' => 'mobile'],function() {
 
 
     Route::get('/worksheetenqindex','MobileController@worksheetEnqIndex')->name('mobile.worksheetenqindex');
+    Route::get('/getworksheetlist','MobileController@getWorksheetList')->name('mobile.getworksheetlist');
+    Route::get('/getworksheetdetails','MobileController@getWorksheetDetails')->name('mobile.getworksheetdetails');
+    Route::post('/uploadpostrecord','MobileController@uploadPostrecord')->name('mobile.uploadpostrecord');
 });
 
 /**
@@ -151,4 +154,5 @@ Route::group(['prefix' => 'worksheet'],function() {
     Route::post('/processwaitshoes','WorksheetController@processWaitshoes')->name('worksheet.processwaitshoes');
     Route::post('/processrepair','WorksheetController@processRepair')->name('worksheet.processrepair');
     Route::post('/processsendback','WorksheetController@processSendback')->name('worksheet.processsendback');
+    Route::post('/changestatus','WorksheetController@changeStatus')->name('worksheet.changestatus');
 });

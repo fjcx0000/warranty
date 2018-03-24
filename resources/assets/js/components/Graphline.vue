@@ -11,17 +11,17 @@ import Chart from 'chart.js';
             render(data)
             {
                 this.Chart = new Chart(this.$refs.canvasline.getContext('2d'), {
-                    type: 'line',
+                    type: 'bar',
                     data: {
                     labels: this.labels,
                     datasets: [
                         {
-                            label: 'Created',
+                            label: '创建',
                             borderColor: "rgb(58,72,92)",
                             data: this.values
                         },
                         {
-                            label: 'Completed',
+                            label: '完成',
                             backgroundColor: "rgba(151,187,205,0.2)",
                             borderColor: "rgba(60,141,188,0.8)",
                             data: this.valuesextra

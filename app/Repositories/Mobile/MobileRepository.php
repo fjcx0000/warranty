@@ -9,10 +9,10 @@
 namespace App\Repositories\Mobile;
 
 use App\Models\Channel;
-use App\Models\WorksheetSeqno;
 use App\Models\WorkSheet;
 use App\Models\WorkLog;
 use App\Models\Product;
+use App\Models\PostRecord;
 use DB;
 
 
@@ -89,6 +89,31 @@ class MobileRepository implements MobileRepositoryContract
         $worklog = new WorkLog();
         $worklog->sheetID = $worksheet->id;
         $worklog->remark = "图片和客户地址信息上传成功，客户问题描述是：".$worksheet->issueDesc;
+        $worklog->processPhase = $worksheet->processPhase;
+        $worklog->save();
+    }
+
+    public function uploadPostrecord($request)
+    {
+        $worksheet = WorkSheet::where('sheetCode',$request->sheetCode)
+            ->get()->first();
+        if ($worksheet->processPhase != 'waitshoes') //工单未审核，不能上传
+            throw new \Exception("工单未审核或已处理，不能上传快递单");
+
+        $postrecord = PostRecord::firstOrCreate([
+            ['sheetID', $worksheet->id],
+            ['type', 'R']
+        ]);
+        $postrecord->sheetID = $worksheet->id;
+        $postrecord->type = 'R';
+        $postrecord->carrierID = 0;
+        $postrecord->carrierName = $request->carrierName;
+        $postrecord->trackNumber = $request->trackNumber;
+        $postrecord->save();
+
+        $worklog = new WorkLog();
+        $worklog->sheetID = $worksheet->id;
+        $worklog->remark = "客户上传快递单信息：".$postrecord->carrierName."-".$postrecord->trackNumber;
         $worklog->processPhase = $worksheet->processPhase;
         $worklog->save();
     }

@@ -22,4 +22,12 @@ interface WorksheetRepositoryContract
     public function processSendback($request);
 
     public function getWorksheetPhaseCount($processPhase);
+
+    public function getWorksheetServiceCount($serviceType, $statPeriod);
+
+    public function getWorksheetDailyCreated($statPeriod);
+
+    public function getWorksheetDailyCompleted($statPeriod);
+
+    public function changeStatus($request);
 }
